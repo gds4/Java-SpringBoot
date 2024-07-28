@@ -1,10 +1,16 @@
 package todosimple.models;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,6 +28,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import todosimple.models.enums.ProfileEnum;
 
 
 @Entity
@@ -60,4 +67,19 @@ public class User {
     @JsonProperty(access = Access.WRITE_ONLY)
     private List<Task> tasks = new ArrayList<Task>();
 
+    //garante que sempre será buscado o perfil quando buscar um usuario
+    @ElementCollection(fetch = FetchType.EAGER)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @CollectionTable(name = "user_profile")
+    @Column(name = "profile", nullable = false)
+    private Set<Integer> profiles = new HashSet<>();
+
+
+    public Set<ProfileEnum> getProfiles(){
+        return this.profiles.stream().map(e -> ProfileEnum.toEnum(e)).collect(Collectors.toSet());
+    }
+
+    public void addProfile(ProfileEnum profileEnum){
+        this.profiles.add(profileEnum.getCode());
+    }
 }

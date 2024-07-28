@@ -5,12 +5,14 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import todosimple.models.Task;
 import todosimple.models.User;
 import todosimple.repositories.TaskRepository;
+import todosimple.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class TaskService {
@@ -23,7 +25,7 @@ public class TaskService {
 
     public Task findById(Long id){
         Optional<Task> task = this.taskRepository.findById(id);
-        return task.orElseThrow(() -> new RuntimeException(
+        return task.orElseThrow(() -> new ObjectNotFoundException(
             " Task not found! Id: " + id + "Type: " + Task.class.getName()
             ));
      }
